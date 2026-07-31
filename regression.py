@@ -5,8 +5,8 @@ import numpy as np
 
 class Regression:
     def __init__(self, path: str,
-                 learning_rate: float = 0.1,
-                 iteration: int = 500
+                 learning_rate: float = 0.01,
+                 iteration: int = 1000
                  ):
         self.datapath: str = path
         self._check_file()
@@ -116,8 +116,6 @@ class Regression:
             self.theta1 -= self.learning_rate * erreur_1
 
         self.theta0, self.theta1 = self._denormalize_thetas()
-        self.print_theta()
-        print(f'e:{erreur}-e1:{erreur_1}')
 
     def _normalize(self):
         self.km_min = min(p[0] for p in self.points)
@@ -134,14 +132,14 @@ class Regression:
         ]
 
     def print_theta(self):
-        print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
+        print(f'theta0: {self.theta0}\ntheta1: {self.theta1}')
 
     def print_beta(self):
-        print(f'beta0: {self.beta0}\ntbeta1: {self.beta1}\n')
+        print(f'beta0: {self.beta0}\nBeta1: {self.beta1}')
 
     def print_result(self):
-        print(f'beta0: {self.beta0}\ntbeta1: {self.beta1}\n')
-        print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
+        print(f'beta0: {self.beta0}beta1: {self.beta1}')
+        print(f'theta0: {self.theta0}theta1: {self.theta1}')
         print(f'-a {self.theta0} -x {self.theta1}')
 
     def print_points(self):
