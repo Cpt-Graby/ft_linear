@@ -6,24 +6,24 @@ import numpy as np
 class Regression:
     def __init__(self, path: str,
                  learning_rate: float = 0.1,
-                 iteration: int = 50
+                 iteration: int = 500
                  ):
         self.datapath: str = path
         self._check_file()
         self.points = []
         self._get_points()
-        self.learning_rate: float = learning_rate
-        self.iteration: int = iteration
-        self.sumx = 0
-        self.sumy = 0
-        self.sumx2 = 0
-        self.sumxy = 0
-        self.theta0 = 0
-        self.theta1 = 0
         self.beta0 = 0
         self.beta1 = 0
         self._methode_fermee()
-        self._gradient_descent()
+        self.learning_rate: float = learning_rate
+        self.iteration: int = iteration
+        self.theta0 = 0
+        self.theta1 = 0
+        self.km_min = 0
+        self.km_max = 0
+        self.price_min = 0
+        self.price_max = 0
+        self.normalized_points = []
 
     def _check_file(self):
         try:
@@ -66,14 +66,14 @@ class Regression:
         sum_x2 = np.sum(x * x)
         self.beta1 = (m * sum_xy - sum_x * sum_y) / \
             (m * sum_x2 - sum_x * sum_x)
-        self.beta2 = (sum_y - self.theta1 * sum_x) / m
+        self.beta0 = (sum_y - self.beta1 * sum_x) / m
 
-    def _gradient_descent(self):
+    def gradient_descent(self):
         self.theta0 = 0
         self.theta1 = 0
         len_data = len(self.points)
 
-        for x in range(self.iteration):
+        for _ in range(self.iteration):
             erreur = 0
             erreur_1 = 0
             for i in range(len_data):
@@ -85,8 +85,53 @@ class Regression:
             erreur_1 /= len_data
             self.theta0 -= self.learning_rate * erreur
             self.theta1 -= self.learning_rate * erreur_1
-            self.print_theta()
-            print(f'e:{erreur}-e1:{erreur_1}')
+        self.print_theta()
+        print(f'e:{erreur}-e1:{erreur_1}')
+
+    def _denormalize_thetas(self):
+        theta1_real = self.theta1 * \
+            (self.price_max - self.price_min) / (self.km_max - self.km_min)
+        theta0_real = self.price_min + self.theta0 * (self.price_max - self.price_min) \
+            - theta1_real * self.km_min
+        return theta0_real, theta1_real
+
+    def gradient_descent_norm(self):
+        self.theta0 = 0
+        self.theta1 = 0
+        len_data = len(self.points)
+        self._normalize()
+
+        for _ in range(self.iteration):
+            erreur = 0
+            erreur_1 = 0
+            for i in range(len_data):
+                estimate_price = self.theta0 + \
+                    self.theta1 * self.normalized_points[i][0]
+                tmp_erreur = estimate_price - self.normalized_points[i][1]
+                erreur += tmp_erreur
+                erreur_1 += tmp_erreur * self.normalized_points[i][0]
+            erreur /= len_data
+            erreur_1 /= len_data
+            self.theta0 -= self.learning_rate * erreur
+            self.theta1 -= self.learning_rate * erreur_1
+
+        self.theta0, self.theta1 = self._denormalize_thetas()
+        self.print_theta()
+        print(f'e:{erreur}-e1:{erreur_1}')
+
+    def _normalize(self):
+        self.km_min = min(p[0] for p in self.points)
+        self.km_max = max(p[0] for p in self.points)
+        self.price_min = min(p[1] for p in self.points)
+        self.price_max = max(p[1] for p in self.points)
+
+        self.normalized_points = [
+            (
+                (km - self.km_min) / (self.km_max - self.km_min),
+                (price - self.price_min) / (self.price_max - self.price_min)
+            )
+            for km, price in self.points
+        ]
 
     def print_theta(self):
         print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
