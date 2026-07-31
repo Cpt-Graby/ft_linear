@@ -22,7 +22,6 @@ def main():
         sys.exit(1)
     logging.info('%s exist', args.file)
     a = Regression(args.file, args.learning_rate, args.iteration)
-    print("----")
     a.gradient_descent_norm()
     print("----")
     a.print_result()

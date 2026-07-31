@@ -132,14 +132,14 @@ class Regression:
         ]
 
     def print_theta(self):
-        print(f'theta0: {self.theta0}\ntheta1: {self.theta1}')
+        print(f'theta0: {self.theta0} \ntheta1: {self.theta1}')
 
     def print_beta(self):
-        print(f'beta0: {self.beta0}\nBeta1: {self.beta1}')
+        print(f'beta0: {self.beta0} \nBeta1: {self.beta1}')
 
     def print_result(self):
-        print(f'beta0: {self.beta0}beta1: {self.beta1}')
-        print(f'theta0: {self.theta0}theta1: {self.theta1}')
+        print(f'beta0: {self.beta0} - beta1: {self.beta1}')
+        print(f'theta0: {self.theta0} - theta1: {self.theta1}')
         print(f'-a {self.theta0} -x {self.theta1}')
 
     def print_points(self):
