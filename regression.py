@@ -16,6 +16,10 @@ class Regression:
         self.iteration: int = iteration
         self.theta0 = 0
         self.theta1 = 0
+        self.beta0 = 0
+        self.beta1 = 0
+        self._methode_fermee()
+        self._gradient_descent()
 
     def _check_file(self):
         try:
@@ -48,10 +52,34 @@ class Regression:
         self.points = np.genfromtxt(
             self.datapath, delimiter=',', skip_header=1)
 
-    def _calcul(self):
-        pass
+    def _methode_fermee(self):
+        x = self.points[:, 0]
+        y = self.points[:, 1]
+        m = len(x)
+        sum_x = np.sum(x)
+        sum_y = np.sum(y)
+        sum_xy = np.sum(x * y)
+        sum_x2 = np.sum(x * x)
+        self.beta1 = (m * sum_xy - sum_x * sum_y) / \
+            (m * sum_x2 - sum_x * sum_x)
+        self.beta2 = (sum_y - self.theta1 * sum_x) / m
+
+    def _gradient_descent(self):
+        x = self.points[:, 0]  # mileage
+        y = self.points[:, 1]  # price
+        m = len(x)
+
+        for _ in range(self.iteration):
+            predictions = self.theta0 + self.theta1 * x
+            errors = predictions - y
+
+            tmp_theta0 = self.learning_rate * (1/m) * np.sum(errors)
+            tmp_theta1 = self.learning_rate * (1/m) * np.sum(errors * x)
+            self.theta0 -= tmp_theta0
+            self.theta1 -= tmp_theta1
 
     def print_result(self):
+        print(f'beta0: {self.beta0}\ntbeta1: {self.beta1}\n')
         print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
         print(f'-a {self.theta0} -x {self.theta1}\n')
 
