@@ -14,7 +14,9 @@ source: [https://fr.wikipedia.org/wiki/Régression_linéaire](https://fr.wikiped
 ## Installation
 
 ```bash
+python3 -m venv venv
 pip install -r requirements.txt
+source venv/bin/activate
 ```
 
 ## Programme
