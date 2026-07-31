@@ -18,7 +18,7 @@ def main():
         sys.exit(1)
     logging.info('%s exist', args.file)
     a = Regression(args.file)
-    a.print_points()
+
     return
 
 

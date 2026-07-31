@@ -5,8 +5,8 @@ import numpy as np
 
 class Regression:
     def __init__(self, path: str,
-                 learning_rate: float = 0.01,
-                 iteration: int = 1000
+                 learning_rate: float = 0.1,
+                 iteration: int = 50
                  ):
         self.datapath: str = path
         self._check_file()
@@ -14,6 +14,10 @@ class Regression:
         self._get_points()
         self.learning_rate: float = learning_rate
         self.iteration: int = iteration
+        self.sumx = 0
+        self.sumy = 0
+        self.sumx2 = 0
+        self.sumxy = 0
         self.theta0 = 0
         self.theta1 = 0
         self.beta0 = 0
@@ -65,23 +69,35 @@ class Regression:
         self.beta2 = (sum_y - self.theta1 * sum_x) / m
 
     def _gradient_descent(self):
-        x = self.points[:, 0]  # mileage
-        y = self.points[:, 1]  # price
-        m = len(x)
+        self.theta0 = 0
+        self.theta1 = 0
+        len_data = len(self.points)
 
-        for _ in range(self.iteration):
-            predictions = self.theta0 + self.theta1 * x
-            errors = predictions - y
+        for x in range(self.iteration):
+            erreur = 0
+            erreur_1 = 0
+            for i in range(len_data):
+                estimate_price = self.theta0 + self.theta1 * self.points[i][0]
+                tmp_erreur = estimate_price - self.points[i][1]
+                erreur += tmp_erreur
+                erreur_1 += tmp_erreur * self.points[i][0]
+            erreur /= len_data
+            erreur_1 /= len_data
+            self.theta0 -= self.learning_rate * erreur
+            self.theta1 -= self.learning_rate * erreur_1
+            self.print_theta()
+            print(f'e:{erreur}-e1:{erreur_1}')
 
-            tmp_theta0 = self.learning_rate * (1/m) * np.sum(errors)
-            tmp_theta1 = self.learning_rate * (1/m) * np.sum(errors * x)
-            self.theta0 -= tmp_theta0
-            self.theta1 -= tmp_theta1
+    def print_theta(self):
+        print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
+
+    def print_beta(self):
+        print(f'beta0: {self.beta0}\ntbeta1: {self.beta1}\n')
 
     def print_result(self):
         print(f'beta0: {self.beta0}\ntbeta1: {self.beta1}\n')
         print(f'theta0: {self.theta0}\ntheta1: {self.theta1}\n')
-        print(f'-a {self.theta0} -x {self.theta1}\n')
+        print(f'-a {self.theta0} -x {self.theta1}')
 
     def print_points(self):
         for x, y in self.points:
